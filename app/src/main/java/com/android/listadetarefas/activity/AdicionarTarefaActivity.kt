@@ -1,7 +1,8 @@
-package com.android.listadetarefas
+package com.android.listadetarefas.activity.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.android.listadetarefas.R
 
 class AdicionarTarefaActivity : AppCompatActivity() {
 
