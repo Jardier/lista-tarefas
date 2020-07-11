@@ -28,18 +28,15 @@ class MainActivity : AppCompatActivity() {
 
         //inicializando variáveis
         recyclerView = findViewById(R.id.recyclerView);
-        tarefas = criarTarefas();
-
-
 
         fab.setOnClickListener { view ->
             val intent = Intent(applicationContext, AdicionarTarefaActivity::class.java);
             startActivity(intent);
 
         }
+
         //Criando um Adapter
         val adapter = TarefaAdapter(tarefas);
-
 
         //Configurando o RecyclerWier
         recyclerView.layoutManager = LinearLayoutManager(this);
@@ -48,6 +45,12 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter = adapter;
 
 
+    }
+
+
+    override fun onStart() {
+        super.onStart()
+        tarefas = criarTarefas();
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
