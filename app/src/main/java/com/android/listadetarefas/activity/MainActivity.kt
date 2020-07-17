@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.listadetarefas.R
 import com.android.listadetarefas.adapter.TarefaAdapter
+import com.android.listadetarefas.helper.DBHelper
 import com.android.listadetarefas.listener.RecyclerItemClickListener
 import com.android.listadetarefas.model.Tarefa
 
@@ -21,6 +22,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     lateinit var recyclerView: RecyclerView;
+    lateinit var dbHelper: DBHelper;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,15 +31,15 @@ class MainActivity : AppCompatActivity() {
 
         //inicializando variáveis
         recyclerView = findViewById(R.id.recyclerView);
+        dbHelper = DBHelper(applicationContext);
 
+        //Evento de click
         fab.setOnClickListener { view ->
             val intent = Intent(applicationContext, AdicionarTarefaActivity::class.java);
             startActivity(intent);
 
         }
-
     }
-
 
     override fun onStart() {
         criarListaDeTarefas();
