@@ -5,12 +5,15 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.listadetarefas.R
 import com.android.listadetarefas.adapter.TarefaAdapter
+import com.android.listadetarefas.listener.RecyclerItemClickListener
 import com.android.listadetarefas.model.Tarefa
 
 import kotlinx.android.synthetic.main.activity_main.*
@@ -18,8 +21,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     lateinit var recyclerView: RecyclerView;
-    lateinit var tarefas : List<Tarefa>;
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,22 +36,12 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        //Criando um Adapter
-        val adapter = TarefaAdapter(tarefas);
-
-        //Configurando o RecyclerWier
-        recyclerView.layoutManager = LinearLayoutManager(this);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL));
-        recyclerView.adapter = adapter;
-
-
     }
 
 
     override fun onStart() {
-        super.onStart()
-        tarefas = criarTarefas();
+        criarListaDeTarefas();
+        super.onStart();
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -69,13 +60,35 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun criarTarefas() : List<Tarefa> {
+    private fun criarListaDeTarefas() {
         val tarefas = arrayListOf<Tarefa>(
             Tarefa("Estudar Java"),
             Tarefa("Estudar Kotlin")
         )
 
-        return tarefas
+        //Criando um Adapter
+        val adapter = TarefaAdapter(tarefas);
+
+        //Configurando o RecyclerView
+        recyclerView.layoutManager = LinearLayoutManager(this);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL));
+        recyclerView.adapter = adapter;
+
+        //Evento de Click no RecycleView
+        recyclerView.addOnItemTouchListener(RecyclerItemClickListener(this, recyclerView, object : RecyclerItemClickListener.OnItemClickListener{
+            override fun onItemClick(view: View, position: Int) {
+                val tarefa = tarefas.get(position);
+                Toast.makeText(applicationContext, "Item pressionado: ${tarefa.descricao}", Toast.LENGTH_LONG).show();
+            }
+
+            override fun onItemLongClick(view: View, position: Int) {
+                val tarefa = tarefas.get(position);
+                Toast.makeText(applicationContext, "Item clicado: ${tarefa.descricao}", Toast.LENGTH_LONG).show();
+
+            }
+        }))
+
     }
 
 }
