@@ -2,6 +2,7 @@ package com.android.listadetarefas.dao
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import com.android.listadetarefas.helper.DBHelper
@@ -20,7 +21,7 @@ class TarefaDAO(context: Context)  : ITarefaDAO {
 
     override fun salvar(tarefa: Tarefa): Boolean {
         val cv = ContentValues();
-        cv.put("descicao", tarefa.descricao);
+        cv.put("descricao", tarefa.descricao);
 
         try {
             escreve.insert(DBHelper.TABELA_TAREFAS, null, cv);
@@ -28,8 +29,6 @@ class TarefaDAO(context: Context)  : ITarefaDAO {
         } catch (e : Exception) {
             Log.i("INFO", "Ocorreu um erro ao salvar a tarefa: ${tarefa.descricao}")
         }
-        escreve.insert(DBHelper.TABELA_TAREFAS, null, cv);
-
         return true;
     }
 
@@ -42,6 +41,23 @@ class TarefaDAO(context: Context)  : ITarefaDAO {
     }
 
     override fun listar(): List<Tarefa> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val tarefas = mutableListOf<Tarefa>()
+
+        val sql : String = "SELECT * FROM "
+            .plus(DBHelper.TABELA_TAREFAS)
+            .plus(";");
+
+        //Recuperando as tarefas
+        val cursor : Cursor = le.rawQuery(sql, null);
+
+        while (cursor.moveToNext()) {
+            val id = cursor.getLong(cursor.getColumnIndex("id"));
+            val descricao = cursor.getString(cursor.getColumnIndex("descricao"))
+            val tarefa = Tarefa(id,descricao);
+
+            tarefas.add(tarefa);
+        }
+
+        return tarefas;
     }
 }

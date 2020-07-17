@@ -37,6 +37,9 @@ class AdicionarTarefaActivity : AppCompatActivity() {
 
                 if(tarefa != null && !tarefa.descricao.equals("")){
                     tarefaDAO.salvar(tarefa);
+                    finish();
+                } else {
+                    Toast.makeText(this, "Favor preenche o nome da tarefa",Toast.LENGTH_LONG).show();
                 }
 
             }
