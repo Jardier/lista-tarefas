@@ -6,12 +6,22 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import com.android.listadetarefas.R
+import com.android.listadetarefas.dao.TarefaDAO
+import com.android.listadetarefas.model.Tarefa
+import com.google.android.material.textfield.TextInputEditText
 
 class AdicionarTarefaActivity : AppCompatActivity() {
+
+    lateinit var tarefaDAO: TarefaDAO;
+    lateinit var tieDescTarefa : TextInputEditText;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_adicionar_tarefa)
+
+        //inicializando variáveis
+        this.tieDescTarefa = findViewById(R.id.tieDescTarefa);
+        this.tarefaDAO = TarefaDAO(this);
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -23,7 +33,12 @@ class AdicionarTarefaActivity : AppCompatActivity() {
 
         when(item.itemId) {
             R.id.itemSalvar -> {
-                Toast.makeText(applicationContext,"Menu Salvar clicado", Toast.LENGTH_LONG).show();
+                val tarefa = Tarefa(this.tieDescTarefa.text.toString());
+
+                if(tarefa != null && !tarefa.descricao.equals("")){
+                    tarefaDAO.salvar(tarefa);
+                }
+
             }
         }
 

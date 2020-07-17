@@ -20,7 +20,7 @@ class DBHelper : SQLiteOpenHelper{
     override fun onCreate(db: SQLiteDatabase?) {
        var sql : String = "CREATE TABLE IF NOT EXISTS ${TABELA_TAREFAS} "
                    .plus( "( id INTEGER PRIMARY KEY AUTOINCREMENT,")
-                   .plus(" nome TEXT NOT NULL );");
+                   .plus(" descricao TEXT NOT NULL );");
         try {
            db!!.execSQL(sql);
             Log.i("INFO DB", "Tabela ${TABELA_TAREFAS} criada com sucesso.")
