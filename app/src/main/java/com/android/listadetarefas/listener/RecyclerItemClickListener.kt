@@ -21,7 +21,7 @@ class RecyclerItemClickListener(context : Context, recyclerView: RecyclerView, p
                 val childView = recyclerView.findChildViewUnder(e!!.x, e.y);
 
                 if(childView != null && mListener != null) {
-                    mListener.onItemClick(childView, recyclerView.getChildAdapterPosition(childView));
+                    mListener.onItemLongClick(childView, recyclerView.getChildAdapterPosition(childView));
                 }
             }
         })

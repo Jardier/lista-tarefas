@@ -79,12 +79,12 @@ class MainActivity : AppCompatActivity() {
         recyclerView.addOnItemTouchListener(RecyclerItemClickListener(this, recyclerView, object : RecyclerItemClickListener.OnItemClickListener{
             override fun onItemClick(view: View, position: Int) {
                 val tarefa = tarefas.get(position);
-                Toast.makeText(applicationContext, "Item pressionado: ${tarefa.descricao}", Toast.LENGTH_LONG).show();
+                Toast.makeText(applicationContext, "Item clicado: ${tarefa.descricao}", Toast.LENGTH_LONG).show();
             }
 
             override fun onItemLongClick(view: View, position: Int) {
                 val tarefa = tarefas.get(position);
-                Toast.makeText(applicationContext, "Item clicado: ${tarefa.descricao}", Toast.LENGTH_LONG).show();
+                Toast.makeText(applicationContext, "Item Pressionado: ${tarefa.descricao}", Toast.LENGTH_LONG).show();
 
             }
         }))
