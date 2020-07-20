@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var recyclerView: RecyclerView;
     lateinit var tarefaDAO : TarefaDAO;
+    lateinit var tarefa : Tarefa;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,9 +35,12 @@ class MainActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerView);
         tarefaDAO = TarefaDAO(applicationContext);
 
+        tarefa = Tarefa();
+
         //Evento de click
         fab.setOnClickListener { view ->
             val intent = Intent(applicationContext, AdicionarTarefaActivity::class.java);
+            intent.putExtra("TAREFA", tarefa);
             startActivity(intent);
 
         }
@@ -78,8 +82,11 @@ class MainActivity : AppCompatActivity() {
         //Evento de Click no RecycleView
         recyclerView.addOnItemTouchListener(RecyclerItemClickListener(this, recyclerView, object : RecyclerItemClickListener.OnItemClickListener{
             override fun onItemClick(view: View, position: Int) {
-                val tarefa = tarefas.get(position);
-                Toast.makeText(applicationContext, "Item clicado: ${tarefa.descricao}", Toast.LENGTH_LONG).show();
+                val tarefaSelecionada: Tarefa = tarefas.get(position);
+
+                val intent = Intent(this@MainActivity, AdicionarTarefaActivity::class.java);
+                intent.putExtra("TAREFA", tarefaSelecionada);
+                startActivity(intent);
             }
 
             override fun onItemLongClick(view: View, position: Int) {

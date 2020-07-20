@@ -25,7 +25,8 @@ class TarefaDAO(context: Context)  : ITarefaDAO {
 
         try {
             escreve.insert(DBHelper.TABELA_TAREFAS, null, cv);
-            Log.i("INFO", "Tarefa:  ${tarefa.descricao} salva com sucesso");
+            Log.i("INFO", "Tarefa:  ${tarefa.descricao} salva com sucesso.");
+
         } catch (e : Exception) {
             Log.i("INFO", "Ocorreu um erro ao salvar a tarefa: ${tarefa.descricao}")
         }
@@ -33,7 +34,19 @@ class TarefaDAO(context: Context)  : ITarefaDAO {
     }
 
     override fun atualizar(tarefa: Tarefa): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val cv = ContentValues();
+        cv.put("descricao", tarefa.descricao);
+        var args = arrayListOf<String>(tarefa.id.toString());
+
+        try {
+            escreve.update(DBHelper.TABELA_TAREFAS, cv, "id=?", args.toTypedArray() )
+            Log.i("INFO", "Tarefa: ${tarefa.descricao} atulizada com sucesso.")
+
+        } catch (e : java.lang.Exception) {
+            Log.i("INFO", "Ocorreu um erro ao atualizar a tarefa: ${tarefa.descricao}.")
+        }
+
+        return true;
     }
 
     override fun deletar(tarefa: Tarefa): Boolean {

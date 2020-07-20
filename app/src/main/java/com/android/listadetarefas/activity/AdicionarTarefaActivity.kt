@@ -12,16 +12,26 @@ import com.google.android.material.textfield.TextInputEditText
 
 class AdicionarTarefaActivity : AppCompatActivity() {
 
-    lateinit var tarefaDAO: TarefaDAO;
-    lateinit var tieDescTarefa : TextInputEditText;
+    lateinit var tarefaDAO: TarefaDAO
+    lateinit var txtDescricaoTarefa : TextInputEditText
+    lateinit var tarefaAtual : Tarefa;
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_adicionar_tarefa)
 
-        //inicializando variáveis
-        this.tieDescTarefa = findViewById(R.id.tieDescTarefa);
-        this.tarefaDAO = TarefaDAO(this);
+       //inicializando variáveis
+        this.txtDescricaoTarefa = findViewById(R.id.tieDescTarefa)
+        this.tarefaDAO = TarefaDAO(this)
+
+        //Caso seja edição, recebemos os dados, do contrário uma Tarefa vazia
+        tarefaAtual = intent.getSerializableExtra("TAREFA") as Tarefa;
+
+        if(!tarefaAtual.descricao.trim().equals("")){
+            txtDescricaoTarefa.setText(tarefaAtual.descricao);
+        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -33,15 +43,19 @@ class AdicionarTarefaActivity : AppCompatActivity() {
 
         when(item.itemId) {
             R.id.itemSalvar -> {
-                val tarefa = Tarefa(this.tieDescTarefa.text.toString());
+                val nomeTarefa : String = txtDescricaoTarefa.text.toString();
 
-                if(tarefa != null && !tarefa.descricao.equals("")){
-                    tarefaDAO.salvar(tarefa);
-                    finish();
-                } else {
-                    Toast.makeText(this, "Favor preenche o nome da tarefa",Toast.LENGTH_LONG).show();
+                if(nomeTarefa.trim().equals("")) {
+                    Toast.makeText(this, "Favor preencher a tarefa", Toast.LENGTH_LONG).show();
+                    return false;
                 }
-
+                if(this.tarefaAtual.id == null) {//salvar
+                   tarefaDAO.salvar(Tarefa(null, nomeTarefa));
+                   finish();
+                }else {//edição
+                   tarefaDAO.atualizar(Tarefa(tarefaAtual.id, nomeTarefa));
+                   finish();
+                }
             }
         }
 
