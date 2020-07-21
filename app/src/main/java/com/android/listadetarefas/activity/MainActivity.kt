@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var recyclerView: RecyclerView;
     lateinit var tarefaDAO : TarefaDAO;
     lateinit var tarefaSelecionada : Tarefa;
+    lateinit var tarefas : ArrayList<Tarefa>;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         //inicializando variáveis
         recyclerView = findViewById(R.id.recyclerView);
         tarefaDAO = TarefaDAO(this);
+        tarefas = ArrayList<Tarefa>();
 
         tarefaSelecionada = Tarefa();
 
@@ -47,42 +49,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(applicationContext, AdicionarTarefaActivity::class.java);
             intent.putExtra("TAREFA", tarefaSelecionada);
             startActivity(intent);
-
         }
-    }
-
-    override fun onStart() {
-        carregarListaDeTarefas();
-        super.onStart();
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    private fun carregarListaDeTarefas() {
-        val tarefas = tarefaDAO.listar();
-
-        //Criando um Adapter
-        val adapter = TarefaAdapter(tarefas);
-
-        //Configurando o RecyclerView
-        recyclerView.layoutManager = LinearLayoutManager(this);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL));
-        recyclerView.adapter = adapter;
 
         //Evento de Click no RecycleView
         recyclerView.addOnItemTouchListener(RecyclerItemClickListener(applicationContext, recyclerView, object : RecyclerItemClickListener.OnItemClickListener{
@@ -121,6 +88,40 @@ class MainActivity : AppCompatActivity() {
             }
 
         }));
+    }
+
+    override fun onStart() {
+        carregarListaDeTarefas();
+        super.onStart();
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        return when (item.itemId) {
+            R.id.action_settings -> true
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun carregarListaDeTarefas() {
+        tarefas = tarefaDAO.listar();
+
+        //Criando um Adapter
+        val adapter = TarefaAdapter(tarefas);
+
+        //Configurando o RecyclerView
+        recyclerView.layoutManager = LinearLayoutManager(this);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL));
+        recyclerView.adapter = adapter;
 
     }
 
