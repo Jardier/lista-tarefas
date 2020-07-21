@@ -23,7 +23,7 @@ class AdicionarTarefaActivity : AppCompatActivity() {
 
        //inicializando variáveis
         this.txtDescricaoTarefa = findViewById(R.id.tieDescTarefa)
-        this.tarefaDAO = TarefaDAO(this)
+        this.tarefaDAO = TarefaDAO(this);
 
         //Caso seja edição, recebemos os dados, do contrário uma Tarefa vazia
         tarefaAtual = intent.getSerializableExtra("TAREFA") as Tarefa;
@@ -46,19 +46,26 @@ class AdicionarTarefaActivity : AppCompatActivity() {
                 val nomeTarefa : String = txtDescricaoTarefa.text.toString();
 
                 if(nomeTarefa.trim().equals("")) {
-                    Toast.makeText(this, "Favor preencher a tarefa", Toast.LENGTH_LONG).show();
+                    Toast.makeText(applicationContext, "Favor preencher a tarefa", Toast.LENGTH_LONG).show();
                     return false;
                 }
                 if(this.tarefaAtual.id == null) {//salvar
-                   tarefaDAO.salvar(Tarefa(null, nomeTarefa));
-                   finish();
+                   if(tarefaDAO.salvar(Tarefa(null, nomeTarefa))){
+                       finish();
+                       Toast.makeText(applicationContext, "Tarefa salva com sucesso.", Toast.LENGTH_LONG).show();
+                   } else {
+                       Toast.makeText(applicationContext, "Ocorreu um erro ao salvar a tarefa.", Toast.LENGTH_LONG).show();
+                   }
                 }else {//edição
-                   tarefaDAO.atualizar(Tarefa(tarefaAtual.id, nomeTarefa));
-                   finish();
+                   if(tarefaDAO.atualizar(Tarefa(tarefaAtual.id, nomeTarefa))) {
+                       finish();
+                       Toast.makeText(applicationContext, "Tarefa atualizada com sucesso.", Toast.LENGTH_LONG).show();
+                   } else {
+                       Toast.makeText(applicationContext, "Ocorreu um erro ao atualizar a tarefa.", Toast.LENGTH_LONG).show();
+                   }
                 }
             }
         }
-
         return super.onOptionsItemSelected(item)
     }
 }

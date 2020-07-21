@@ -28,7 +28,8 @@ class TarefaDAO(context: Context)  : ITarefaDAO {
             Log.i("INFO", "Tarefa:  ${tarefa.descricao} salva com sucesso.");
 
         } catch (e : Exception) {
-            Log.i("INFO", "Ocorreu um erro ao salvar a tarefa: ${tarefa.descricao}")
+            Log.i("INFO", "Ocorreu um erro ao salvar a tarefa: ${tarefa.descricao}");
+            return false;
         }
         return true;
     }
@@ -44,17 +45,26 @@ class TarefaDAO(context: Context)  : ITarefaDAO {
 
         } catch (e : java.lang.Exception) {
             Log.i("INFO", "Ocorreu um erro ao atualizar a tarefa: ${tarefa.descricao}.")
+            return false;
         }
-
         return true;
     }
 
     override fun deletar(tarefa: Tarefa): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+       var args = arrayListOf<String>(tarefa.id.toString());
+
+        try {
+            escreve.delete(DBHelper.TABELA_TAREFAS,"id=?", args.toTypedArray());
+            Log.i("INFO", "Tarefa: ${tarefa.descricao} excluida com sucesso.")
+        } catch (e: Exception) {
+            Log.i("INFO", "Ocorreu um erro ao atualizar a tarefa: ${tarefa.descricao}.");
+            return false;
+        }
+        return true;
     }
 
-    override fun listar(): List<Tarefa> {
-        val tarefas = mutableListOf<Tarefa>()
+    override fun listar(): ArrayList<Tarefa> {
+        val tarefas : ArrayList<Tarefa> = ArrayList();
 
         val sql : String = "SELECT * FROM "
             .plus(DBHelper.TABELA_TAREFAS)

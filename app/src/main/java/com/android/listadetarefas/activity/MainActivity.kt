@@ -1,5 +1,8 @@
 package com.android.listadetarefas.activity.activity
 
+
+
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -8,13 +11,15 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
+
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.listadetarefas.R
 import com.android.listadetarefas.adapter.TarefaAdapter
 import com.android.listadetarefas.dao.TarefaDAO
-import com.android.listadetarefas.helper.DBHelper
+
 import com.android.listadetarefas.listener.RecyclerItemClickListener
 import com.android.listadetarefas.model.Tarefa
 
@@ -24,7 +29,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var recyclerView: RecyclerView;
     lateinit var tarefaDAO : TarefaDAO;
-    lateinit var tarefa : Tarefa;
+    lateinit var tarefaSelecionada : Tarefa;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,21 +38,21 @@ class MainActivity : AppCompatActivity() {
 
         //inicializando variáveis
         recyclerView = findViewById(R.id.recyclerView);
-        tarefaDAO = TarefaDAO(applicationContext);
+        tarefaDAO = TarefaDAO(this);
 
-        tarefa = Tarefa();
+        tarefaSelecionada = Tarefa();
 
         //Evento de click
         fab.setOnClickListener { view ->
             val intent = Intent(applicationContext, AdicionarTarefaActivity::class.java);
-            intent.putExtra("TAREFA", tarefa);
+            intent.putExtra("TAREFA", tarefaSelecionada);
             startActivity(intent);
 
         }
     }
 
     override fun onStart() {
-        criarListaDeTarefas();
+        carregarListaDeTarefas();
         super.onStart();
     }
 
@@ -67,7 +72,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun criarListaDeTarefas() {
+    private fun carregarListaDeTarefas() {
         val tarefas = tarefaDAO.listar();
 
         //Criando um Adapter
@@ -80,21 +85,42 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter = adapter;
 
         //Evento de Click no RecycleView
-        recyclerView.addOnItemTouchListener(RecyclerItemClickListener(this, recyclerView, object : RecyclerItemClickListener.OnItemClickListener{
+        recyclerView.addOnItemTouchListener(RecyclerItemClickListener(applicationContext, recyclerView, object : RecyclerItemClickListener.OnItemClickListener{
+
+            //O clinck usado para alterar
             override fun onItemClick(view: View, position: Int) {
-                val tarefaSelecionada: Tarefa = tarefas.get(position);
-
+                val tarefa: Tarefa = tarefas.get(position);
                 val intent = Intent(this@MainActivity, AdicionarTarefaActivity::class.java);
-                intent.putExtra("TAREFA", tarefaSelecionada);
+                intent.putExtra("TAREFA", tarefa);
                 startActivity(intent);
-            }
-
-            override fun onItemLongClick(view: View, position: Int) {
-                val tarefa = tarefas.get(position);
-                Toast.makeText(applicationContext, "Item Pressionado: ${tarefa.descricao}", Toast.LENGTH_LONG).show();
 
             }
-        }))
+
+            override fun onLongItemClick(view: View, position: Int) {
+                val tarefa: Tarefa = tarefas.get(position);
+                val builder = AlertDialog.Builder(this@MainActivity);
+                builder.setTitle("Confirmação de exclusão");
+                builder.setMessage("Deseja excluír a tarefa: ${tarefa.descricao}?");
+
+                builder.setPositiveButton("SIM", DialogInterface.OnClickListener{dialog, which ->
+                    if(tarefaDAO.deletar(tarefa)) {
+                        carregarListaDeTarefas();
+                        dialog.dismiss();
+                        Toast.makeText(applicationContext, "Tarefa excluída com sucesso.", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(applicationContext, "Ocorreu um erro ao excluír a tarefa.", Toast.LENGTH_LONG).show();
+                    }
+                })
+
+                builder.setNegativeButton("NÃO", DialogInterface.OnClickListener{dialog, which ->
+                    dialog.dismiss();
+                });
+
+                val dialog: AlertDialog = builder.create();
+                dialog.show();
+            }
+
+        }));
 
     }
 
